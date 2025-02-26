@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, User } from 'lucide-react';
 
-const UserNavbar = ({ toggleSidebar }) => {
+interface UserNavbarProps {
+  toggleSidebar: () => void;
+}
+
+const UserNavbar = ({ toggleSidebar }: UserNavbarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -11,8 +15,8 @@ const UserNavbar = ({ toggleSidebar }) => {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };

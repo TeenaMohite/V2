@@ -48,7 +48,9 @@ const UserSettings = () => {
       ...prev,
       [section]: {
         ...prev[section as "notifications" | "security"],
-        [key]: !prev[section as "notifications" | "security"][key as keyof typeof prev["notifications"]],
+        [key]: section === "notifications" 
+          ? !prev.notifications[key as keyof typeof prev.notifications] 
+          : !prev.security[key as keyof typeof prev.security],
       },
     }));
   };

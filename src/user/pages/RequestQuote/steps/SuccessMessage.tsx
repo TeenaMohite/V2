@@ -2,7 +2,11 @@ import React from 'react';
 import { CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const SuccessMessage: React.FC = () => {
+
+interface SuccessMessageProps {
+  onClose: () => void;
+}
+const SuccessMessage: React.FC<SuccessMessageProps> = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {

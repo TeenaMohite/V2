@@ -2,12 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Tickets = () => {
-  const [tickets, setTickets] = useState([]);
+  interface Ticket {
+    ticketId: string;
+    subject: string;
+    timestamp: string;
+    status: string;
+  }
+
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      const savedTickets = JSON.parse(localStorage.getItem("tickets") || []);
+      const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
       setTickets(Array.isArray(savedTickets) ? savedTickets : []);
     } catch (error) {
       console.error("Error parsing tickets:", error);

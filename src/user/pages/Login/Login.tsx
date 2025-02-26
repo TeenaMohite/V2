@@ -8,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
     try {
@@ -46,7 +46,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login Error:", error);
-      toast.error(error.message || "An error occurred", {
+      toast.error((error as Error).message || "An error occurred", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

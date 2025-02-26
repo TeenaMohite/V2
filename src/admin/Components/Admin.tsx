@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { Link, NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
@@ -24,7 +26,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
-  const [ setStats] = useState<StatsType>({
+  const [, setStats] = useState<StatsType>({
     totalUsers: 0,
     listedPolicies: 0,
     listedCategories: 0,

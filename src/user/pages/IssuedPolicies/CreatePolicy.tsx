@@ -39,7 +39,11 @@ const CreatePolicy = () => {
       navigate("/user/userpolicies");
     } catch (error) {
       console.error("Submission Error:", error);
-      alert(error.message || "An error occurred while adding the policy");
+      if (error instanceof Error) {
+        alert(error.message || "An error occurred while adding the policy");
+      } else {
+        alert("An error occurred while adding the policy");
+      }
     }
   };
 

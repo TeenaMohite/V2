@@ -1,19 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import  { useEffect, useState } from "react";
 
-const TicketsPage = ({ setCurrentPage }) => {
-  const [tickets, setTickets] = useState([]);
+interface Ticket {
+  ticketId?: string;
+  name?: string;
+  email?: string;
+  timestamp?: string;
+  type?: string;
+  status?: string;
+}
 
-//   const tickets: Ticket[] = [];
-
-// {tickets.map((ticket, index) => (
-//   <tr key={ticket.ticketId || index}>
-//     <td>{ticket.name || "N/A"}</td>
-//   </tr>
-// ))}
+const TicketsPage = ({ setCurrentPage }: { setCurrentPage: (page: string) => void }) => {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   useEffect(() => {
     try {
-      const savedTickets = JSON.parse(localStorage.getItem("tickets")) || [];
+      const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]") || [];
       setTickets(Array.isArray(savedTickets) ? savedTickets : []);
     } catch (error) {
       console.error("Error fetching tickets:", error);

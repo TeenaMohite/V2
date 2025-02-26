@@ -4,11 +4,22 @@ import { useParams, useNavigate } from "react-router-dom";
 const TicketView = () => {
   const { ticketId } = useParams(); // Get ticket ID from URL
   const navigate = useNavigate();
-  const [ticket, setTicket] = useState(null);
+  interface Ticket {
+    ticketId: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    category: string;
+    subject: string;
+    description: string;
+    status: string;
+  }
+
+  const [ticket, setTicket] = useState<Ticket | null>(null);
 
   useEffect(() => {
-    const savedTickets = JSON.parse(localStorage.getItem("tickets")) || [];
-    const foundTicket = savedTickets.find((t) => t.ticketId === ticketId);
+    const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]") || [];
+    const foundTicket = savedTickets.find((t: { ticketId: string | undefined; }) => t.ticketId === ticketId);
     setTicket(foundTicket || null);
   }, [ticketId]);
 
