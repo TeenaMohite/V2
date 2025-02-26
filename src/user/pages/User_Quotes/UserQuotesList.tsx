@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Search, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,9 +14,9 @@ interface Quote {
 
 const UserQuotesList: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,20 +28,24 @@ const UserQuotesList: React.FC = () => {
           throw new Error("Failed to fetch quotes");
         }
         const data = await response.json();
-
-        const transformedQuotes = data.map((quote) => ({
-          id: quote._id,
-          name: `${quote.firstName} ${quote.lastName}`,
-          requestDate: new Date(quote.requestDate).toLocaleDateString(),
-          insuranceType: quote.requiredPolicy.comprehensive ? "Full" : "3rd Party",
-          vehicleType: `${quote.make} ${quote.model}`,
-          amount: quote.amount,
-          status: quote.status,
+        
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data format");
+        }
+        
+        const transformedQuotes: Quote[] = data.map((quote) => ({
+          id: quote._id || "",
+          name: `${quote.firstName || ""} ${quote.lastName || ""}`.trim(),
+          requestDate: quote.requestDate ? new Date(quote.requestDate).toLocaleDateString() : "N/A",
+          insuranceType: quote.requiredPolicy?.comprehensive ? "Full" : "3rd Party",
+          vehicleType: `${quote.make || "Unknown"} ${quote.model || "Unknown"}`.trim(),
+          amount: quote.amount ? quote.amount.toString() : "0",
+          status: quote.status || "Unknown",
         }));
 
         setQuotes(transformedQuotes);
       } catch (err) {
-        setError(err.message || "An error occurred while fetching quotes");
+        setError(err instanceof Error ? err.message : "An error occurred while fetching quotes");
       } finally {
         setLoading(false);
       }
@@ -50,7 +54,7 @@ const UserQuotesList: React.FC = () => {
     fetchQuotes();
   }, []);
 
-  const filteredQuotes = quotes.filter((quote) =>
+  const filteredQuotes = quotes.filter((quote) => 
     quote.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

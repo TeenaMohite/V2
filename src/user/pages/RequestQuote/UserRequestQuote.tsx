@@ -4,7 +4,7 @@ import CustomerDetails from "./steps/CustomerDetails";
 import VehicleDetails from "./steps/VehicleDetails";
 import InsuranceDetails from "./steps/InsuranceDetails";
 import SuccessMessage from "./steps/SuccessMessage";
-import { toast } from "react-toastify/unstyled";
+import { toast } from "react-toastify";
 
 export type QuoteFormData = {
   firstName: string;
@@ -66,8 +66,8 @@ const initialFormData: QuoteFormData = {
   amount: "",
 };
 
-const UserRequestQuote = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+const UserRequestQuote: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<QuoteFormData>(initialFormData);
   const navigate = useNavigate();
 
@@ -98,11 +98,13 @@ const UserRequestQuote = () => {
 
       setCurrentStep(4);
     } catch (error) {
-      console.error("Submission Error:", error);
-      toast.error(error.message || "An error occurred", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      if (error instanceof Error) {
+        console.error("Submission Error:", error);
+        toast.error(error.message || "An error occurred", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
@@ -135,24 +137,14 @@ const UserRequestQuote = () => {
       {currentStep < 4 && (
         <div className="progress-bar mb-6">
           <div className="progress-steps flex justify-between items-center">
-            <div className={`step flex flex-col items-center space-y-2 ${currentStep >= 1 ? "active" : ""}`}>
-              <div className={`step-number w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep >= 1 ? "bg-purple-600 border-purple-600" : "bg-gray-300 border-gray-400"}`}>
-                1
+            {["Customer Details", "Vehicle Details", "Insurance Details"].map((label, index) => (
+              <div key={index} className={`step flex flex-col items-center space-y-2 ${currentStep >= index + 1 ? "active" : ""}`}>
+                <div className={`step-number w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep >= index + 1 ? "bg-purple-600 border-purple-600" : "bg-gray-300 border-gray-400"}`}>
+                  {index + 1}
+                </div>
+                <span className="text-sm font-medium">{label}</span>
               </div>
-              <span className="text-sm font-medium">Customer Details</span>
-            </div>
-            <div className={`step flex flex-col items-center space-y-2 ${currentStep >= 2 ? "active" : ""}`}>
-              <div className={`step-number w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep >= 2 ? "bg-purple-600 border-purple-600" : "bg-gray-300 border-gray-400"}`}>
-                2
-              </div>
-              <span className="text-sm font-medium">Vehicle Details</span>
-            </div>
-            <div className={`step flex flex-col items-center space-y-2 ${currentStep >= 3 ? "active" : ""}`}>
-              <div className={`step-number w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep >= 3 ? "bg-purple-600 border-purple-600" : "bg-gray-300 border-gray-400"}`}>
-                3
-              </div>
-              <span className="text-sm font-medium">Insurance Details</span>
-            </div>
+            ))}
           </div>
         </div>
       )}

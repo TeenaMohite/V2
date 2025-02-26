@@ -1,16 +1,26 @@
-import React, { useContext } from "react";
-
+import { useContext } from "react";
 import { UserContext } from "../../UserComponents/User/UserContext";
 
+interface User {
+  profileImage?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  dob?: string;
+  address?: string;
+  accountNumber?: string;
+  lastLogin?: string;
+}
 
+const UserProfile: React.FC = () => {
+  const userContext = useContext(UserContext);
 
-const UserProfile = () => {
-  const { user } = useContext(UserContext);
-
-  // Handle case where user data is not available
-  if (!user) {
+  // Ensure userContext exists and has a user property
+  if (!userContext || !userContext.user) {
     return <div className="loading">Loading user data...</div>;
   }
+
+  const { user } = userContext;
 
   return (
     <div className="user-profile">

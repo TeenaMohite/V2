@@ -15,7 +15,7 @@ import { NavLink } from "react-router-dom";
 import { Home as HomeIcon, Car, FileText, LogOut, FileCheck, Settings, HelpCircle, Menu } from "lucide-react";
 import UserQuoteDetailsPage from "../../pages/User_Quotes/UserQuoteDetailsPage";
 import UserQuotesList from "../../pages/User_Quotes/UserQuotesList";
-import UserNavbar from "../UserNavbar/UserNavbar";
+// import UserNavbar from "../UserNavbar/UserNavbar";
 
 const UserLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
