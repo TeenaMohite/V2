@@ -6,8 +6,8 @@ import ReportGeneration from "./Report";
 import PaymentProcessing from "./Payment";
 import PolicyManagement from "./PolicyManagement";
 import QuoteRequestManagement from "./AdminQuote";
-import StatisticsBox from "./StatisticsBox";
-import { FileText, HelpCircle, List, Menu, UserCheck, Users, UserX } from "lucide-react";
+// import StatisticsBox from "./StatisticsBox";
+import {  Menu,  Users } from "lucide-react";
 
 type StatsType = {
   totalUsers: number;
@@ -24,7 +24,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
-  const [stats, setStats] = useState<StatsType>({
+  const [ setStats] = useState<StatsType>({
     totalUsers: 0,
     listedPolicies: 0,
     listedCategories: 0,

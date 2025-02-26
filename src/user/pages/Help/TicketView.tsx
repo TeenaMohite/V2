@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const TicketView = () => {
@@ -7,15 +7,13 @@ const TicketView = () => {
   const [ticket, setTicket] = useState(null);
 
   useEffect(() => {
-    // ✅ Fetch ticket from localStorage using ticketId
     const savedTickets = JSON.parse(localStorage.getItem("tickets")) || [];
-    const foundTicket = savedTickets.find((ticket) => ticket.ticketId === ticketId);
-
-    setTicket(foundTicket || null); // Set ticket or handle not found case
+    const foundTicket = savedTickets.find((t) => t.ticketId === ticketId);
+    setTicket(foundTicket || null);
   }, [ticketId]);
 
   if (!ticket) {
-    return <p className="text-gray-500 text-lg text-center mt-6">Ticket not found.</p>; // ✅ Prevents blank screen if ticket is missing
+    return <p className="text-gray-500 text-lg text-center mt-6">Ticket not found.</p>;
   }
 
   return (
@@ -23,27 +21,19 @@ const TicketView = () => {
       <h2 className="text-2xl font-bold text-purple-700 mb-4">Ticket Details</h2>
 
       <div className="ticket-info bg-purple-100 p-4 rounded-lg shadow-md">
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Ticket ID:</strong> {ticket.ticketId}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Full Name:</strong> {ticket.fullName}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Email:</strong> {ticket.email}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Phone:</strong> {ticket.phone}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Category:</strong> {ticket.category}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Subject:</strong> {ticket.subject}
-        </p>
-        <p className="text-gray-700">
-          <strong className="text-purple-700">Description:</strong> {ticket.description}
-        </p>
+        {[
+          { label: "Ticket ID", value: ticket.ticketId },
+          { label: "Full Name", value: ticket.fullName },
+          { label: "Email", value: ticket.email },
+          { label: "Phone", value: ticket.phone },
+          { label: "Category", value: ticket.category },
+          { label: "Subject", value: ticket.subject },
+          { label: "Description", value: ticket.description },
+        ].map(({ label, value }, index) => (
+          <p key={index} className="text-gray-700">
+            <strong className="text-purple-700">{label}:</strong> {value || "N/A"}
+          </p>
+        ))}
         <p className="text-gray-700">
           <strong className="text-purple-700">Status:</strong>{" "}
           <span
@@ -55,7 +45,7 @@ const TicketView = () => {
                 : "bg-red-200 text-red-800"
             }`}
           >
-            {ticket.status}
+            {ticket.status || "Unknown"}
           </span>
         </p>
       </div>

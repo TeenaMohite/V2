@@ -28,10 +28,10 @@ const CreateTicket = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFormData((prev) => ({ ...prev, attachment: file ? file.name : null }));
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   setFormData((prev) => ({ ...prev, attachment: file ? file.name : null }));
+  // };
 
   const validateForm = (): boolean => {
     const { fullName, email, phone, category, subject, description } = formData;

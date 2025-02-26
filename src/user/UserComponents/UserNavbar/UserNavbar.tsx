@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, User } from 'lucide-react';
 
 const UserNavbar = ({ toggleSidebar }) => {

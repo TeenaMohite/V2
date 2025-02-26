@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,6 +10,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       console.log("Submitting form:", { email, password });
 
@@ -20,11 +21,12 @@ const Login = () => {
       });
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
 
-      toast.success(`Welcome back, ${data.name}!`, {
+      toast.success(`Welcome back, ${data.name || "User"}!`, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -33,6 +35,7 @@ const Login = () => {
         draggable: true,
       });
 
+      // Save role and authentication status
       localStorage.setItem("role", data.role);
       if (data.role === "Admin") {
         localStorage.setItem("adminAuthenticated", "true");

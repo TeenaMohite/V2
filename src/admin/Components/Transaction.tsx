@@ -99,7 +99,7 @@ const Transaction = () => {
               key={key}
               type={key === "cost" ? "number" : key.includes("date") ? "date" : "text"}
               placeholder={key.replace(/([A-Z])/g, " $1").trim()}
-              value={newTransaction[key]}
+              value={(newTransaction as Record<string, string>)[key]}
               onChange={(e) => setNewTransaction({ ...newTransaction, [key]: e.target.value })}
               className="w-full px-3 py-2 bg-purple-200 border border-yellow-700 rounded-md text-black"
             />

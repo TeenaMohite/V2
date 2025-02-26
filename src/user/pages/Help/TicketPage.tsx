@@ -1,40 +1,72 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import  { useEffect, useState } from "react";
 
-const Tickets = () => {
+const TicketsPage = ({ setCurrentPage }) => {
   const [tickets, setTickets] = useState([]);
-  const navigate = useNavigate();
+
+//   const tickets: Ticket[] = [];
+
+// {tickets.map((ticket, index) => (
+//   <tr key={ticket.ticketId || index}>
+//     <td>{ticket.name || "N/A"}</td>
+//   </tr>
+// ))}
 
   useEffect(() => {
-    const savedTickets = JSON.parse(localStorage.getItem("tickets")) || [];
-    setTickets(savedTickets);
+    try {
+      const savedTickets = JSON.parse(localStorage.getItem("tickets")) || [];
+      setTickets(Array.isArray(savedTickets) ? savedTickets : []);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+      setTickets([]);
+    }
   }, []);
 
   return (
-    <div className="tickets-container bg-gradient-to-r from-white via-purple-100 to-white min-h-screen p-6 text-gray-900">
-      <h2 className="text-2xl font-bold text-purple-700 mb-6">Your Support Tickets</h2>
+    <div className="tickets-container bg-white shadow-lg rounded-lg p-6 min-h-screen">
+      <h2 className="text-2xl font-bold text-purple-700 mb-4">My Tickets</h2>
 
-      {tickets.length === 0 ? (
-        <p className="text-gray-600">No tickets available.</p>
-      ) : (
-        <div className="grid gap-4">
-          {tickets.map((ticket) => (
-            <div
-              className="ticket-card bg-white border border-purple-300 p-4 rounded-lg shadow-md cursor-pointer hover:bg-purple-50 transition"
-              key={ticket.ticketId}
-              onClick={() => navigate(`/user/ticket-view/${ticket.ticketId}`, { state: { ticket } })}
-            >
-              <h3 className="text-lg font-semibold text-purple-800">{ticket.subject}</h3>
-              <p className="text-sm text-gray-600">{ticket.timestamp}</p>
-              <span className={`ticket-status text-sm font-medium px-2 py-1 rounded ${ticket.status === "Pending" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>
-                {ticket.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+      <button className="help-btn bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
+        onClick={() => setCurrentPage("createTicket")}>
+        Create Support Ticket
+      </button>
+
+      <div className="overflow-x-auto mt-4">
+        <table className="tickets-table w-full border-collapse shadow-md">
+          <thead>
+            <tr className="bg-purple-100 text-purple-800">
+              <th className="p-2">Name</th>
+              <th className="p-2">Email</th>
+              <th className="p-2">Created Date</th>
+              <th className="p-2">Ticket Type</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tickets.length === 0 ? (
+              <tr><td colSpan={6} className="text-center p-4 text-gray-600">No tickets available.</td></tr>
+            ) : (
+              tickets.map((ticket, index) => (
+                <tr key={ticket.ticketId || index} className="border-b hover:bg-purple-50 transition">
+                  <td className="p-2">{ticket.name || "N/A"}</td>
+                  <td className="p-2">{ticket.email || "N/A"}</td>
+                  <td className="p-2">{ticket.timestamp || "N/A"}</td>
+                  <td className="p-2">{ticket.type || "N/A"}</td>
+                  <td className={`p-2 font-medium rounded-md ${
+                    ticket.status === "Approved" ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}>
+                    {ticket.status || "N/A"}
+                  </td>
+                  <td className="p-2 text-center">...</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default Tickets;
+export default TicketsPage;

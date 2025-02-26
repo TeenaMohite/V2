@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Home from "../../pages/Home/Home";
 import RequestQuote from "../../pages/RequestQuote/UserRequestQuote";
