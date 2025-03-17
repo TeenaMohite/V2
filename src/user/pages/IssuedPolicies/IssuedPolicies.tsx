@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import  { useState, useEffect } from "react";
 import { Search, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ const IssuedPolicies: React.FC = () => {
         const transformedPolicies = Array.isArray(data)
           ? data.map((policy) => ({
               id: policy._id || "",
-              name: policy.name || "Unnamed Policy",
+              name: policy.provider || "Unnamed Policy",
               insuranceType: policy.insuranceType || "Unknown",
               vehicleType: policy.vehicleType || "Unknown",
             }))

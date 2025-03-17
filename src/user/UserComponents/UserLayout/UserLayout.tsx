@@ -166,6 +166,7 @@ const UserLayout = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/request-quote" element={<RequestQuote />} />
             <Route path="/user-quotes" element={<UserQuotesList />} />
+            
             <Route path="/quote-details/:id" element={<UserQuoteDetailsPage />} />
             <Route path="/create-policy" element={<CreatePolicy />} />
             <Route path="/userpolicies" element={<IssuedPolicies />} />

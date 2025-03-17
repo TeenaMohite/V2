@@ -97,6 +97,46 @@ const AdminLayout = () => {
                 <Users size={20} className="mr-2 text-yellow-300" />
                 <span className="text-gray-300">User Management</span>
               </NavLink>
+              <NavLink
+                to="/admin/transactions"
+                onClick={closeSidebar}
+                className={({ isActive }) => `flex items-center px-4 py-2 hover:bg-purple-700 transition duration-300 rounded-md ${isActive ? "bg-purple-700" : ""}`}
+              >
+                <Users size={20} className="mr-2 text-yellow-300" />
+                <span className="text-gray-300">Transactions</span>
+              </NavLink>
+              <NavLink
+                to="/admin/reports"
+                onClick={closeSidebar}
+                className={({ isActive }) => `flex items-center px-4 py-2 hover:bg-purple-700 transition duration-300 rounded-md ${isActive ? "bg-purple-700" : ""}`}
+              >
+                <Users size={20} className="mr-2 text-yellow-300" />
+                <span className="text-gray-300">Reports</span>
+              </NavLink>
+              <NavLink
+                to="/admin/payments"
+                onClick={closeSidebar}
+                className={({ isActive }) => `flex items-center px-4 py-2 hover:bg-purple-700 transition duration-300 rounded-md ${isActive ? "bg-purple-700" : ""}`}
+              >
+                <Users size={20} className="mr-2 text-yellow-300" />
+                <span className="text-gray-300">Payments</span>
+              </NavLink>
+              <NavLink
+                to="/admin/policies"
+                onClick={closeSidebar}
+                className={({ isActive }) => `flex items-center px-4 py-2 hover:bg-purple-700 transition duration-300 rounded-md ${isActive ? "bg-purple-700" : ""}`}
+              >
+                <Users size={20} className="mr-2 text-yellow-300" />
+                <span className="text-gray-300">Policies</span>
+              </NavLink>
+              <NavLink
+                to="/admin/quotes"
+                onClick={closeSidebar}
+                className={({ isActive }) => `flex items-center px-4 py-2 hover:bg-purple-700 transition duration-300 rounded-md ${isActive ? "bg-purple-700" : ""}`}
+              >
+                <Users size={20} className="mr-2 text-yellow-300" />
+                <span className="text-gray-300">Quotes</span>
+              </NavLink>
             </li>
           </ul>
         </nav>
@@ -119,12 +159,12 @@ const AdminLayout = () => {
           <Menu size={20} />
         </button>
         <Routes>
-          <Route path="users" element={<UserManagement />} />
-          <Route path="transactions" element={<Transaction />} />
-          <Route path="reports" element={<ReportGeneration />} />
-          <Route path="payments" element={<PaymentProcessing />} />
-          <Route path="policies" element={<PolicyManagement />} />
-          <Route path="quotes" element={<QuoteRequestManagement />} />
+          <Route path="/users" element={<UserManagement />} />
+          <Route path="/transactions" element={<Transaction />} />
+          <Route path="/reports" element={<ReportGeneration />} />
+          <Route path="/payments" element={<PaymentProcessing />} />
+          <Route path="/policies" element={<PolicyManagement />} />
+          <Route path="/quotes" element={<QuoteRequestManagement />} />
         </Routes>
       </main>
     </div>
