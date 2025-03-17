@@ -1,16 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../../UserComponents/User/UserContext";
 
-// interface User {
-//   profileImage?: string;
-//   name?: string;
-//   email?: string;
-//   phone?: string;
-//   dob?: string;
-//   address?: string;
-//   accountNumber?: string;
-//   lastLogin?: string;
-// }
+
 
 const UserProfile: React.FC = () => {
   const userContext = useContext(UserContext);

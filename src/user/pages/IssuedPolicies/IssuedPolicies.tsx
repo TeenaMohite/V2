@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Search, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Policy {
-  id: string;
-  name: string;
-  insuranceType: string;
-  vehicleType: string;
+  _id: string;
+  provider: string;
+  policyNumber: string;
+  coverage: string;
+  premiumAmount: number | string;
 }
 
 const IssuedPolicies: React.FC = () => {
@@ -26,17 +27,7 @@ const IssuedPolicies: React.FC = () => {
           throw new Error("Failed to fetch policies");
         }
         const data = await response.json();
-
-        const transformedPolicies = Array.isArray(data)
-          ? data.map((policy) => ({
-              id: policy._id || "",
-              name: policy.provider || "Unnamed Policy",
-              insuranceType: policy.insuranceType || "Unknown",
-              vehicleType: policy.vehicleType || "Unknown",
-            }))
-          : [];
-
-        setPolicies(transformedPolicies);
+        setPolicies(Array.isArray(data) ? data : []);
       } catch (err: any) {
         setError(err.message || "An error occurred while fetching policies");
       } finally {
@@ -47,8 +38,22 @@ const IssuedPolicies: React.FC = () => {
   }, []);
 
   const filteredPolicies = policies.filter((policy) =>
-    policy.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    policy.provider?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    policy.policyNumber?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Helper function to safely format the premium amount
+  const formatPremium = (amount: number | string) => {
+    if (amount === null || amount === undefined) return "$0.00";
+    
+    // Convert to number if it's a string
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    
+    // Check if it's a valid number
+    if (isNaN(numAmount)) return "$0.00";
+    
+    return `$${numAmount.toFixed(2)}`;
+  };
 
   return (
     <div className="policies-container bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 text-gray-900 min-h-screen p-6">
@@ -68,7 +73,7 @@ const IssuedPolicies: React.FC = () => {
         <Search size={20} className="text-gray-500 mr-2" />
         <input
           type="text"
-          placeholder="Search policies"
+          placeholder="Search by provider or policy number"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="bg-transparent text-gray-900 placeholder-gray-500 outline-none flex-grow"
@@ -96,23 +101,25 @@ const IssuedPolicies: React.FC = () => {
           <table className="w-full bg-white rounded-lg shadow-md border border-gray-300">
             <thead>
               <tr className="bg-purple-700 text-white">
-                <th className="py-2 px-4 text-left text-sm font-semibold">Name</th>
-                <th className="py-2 px-4 text-left text-sm font-semibold">Insurance Type</th>
-                <th className="py-2 px-4 text-left text-sm font-semibold">Vehicle Type</th>
+                <th className="py-2 px-4 text-left text-sm font-semibold">Provider</th>
+                <th className="py-2 px-4 text-left text-sm font-semibold">Policy Number</th>
+                <th className="py-2 px-4 text-left text-sm font-semibold">Coverage</th>
+                <th className="py-2 px-4 text-left text-sm font-semibold">Premium Amount</th>
                 <th className="py-2 px-4 text-left text-sm font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredPolicies.length > 0 ? (
                 filteredPolicies.map((policy) => (
-                  <tr key={policy.id} className="border-b border-gray-300 hover:bg-purple-100">
-                    <td className="py-2 px-4 text-sm">{policy.name}</td>
-                    <td className="py-2 px-4 text-sm">{policy.insuranceType}</td>
-                    <td className="py-2 px-4 text-sm">{policy.vehicleType}</td>
+                  <tr key={policy._id} className="border-b border-gray-300 hover:bg-purple-100">
+                    <td className="py-2 px-4 text-sm">{policy.provider}</td>
+                    <td className="py-2 px-4 text-sm">{policy.policyNumber}</td>
+                    <td className="py-2 px-4 text-sm">{policy.coverage}</td>
+                    <td className="py-2 px-4 text-sm">{formatPremium(policy.premiumAmount)}</td>
                     <td>
                       <button
                         className="view-button bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md shadow-md flex items-center space-x-1 transition duration-300"
-                        onClick={() => navigate(`/user/policy-details/${policy.id}`)}
+                        onClick={() => navigate(`/user/policy-details/${policy._id}`)}
                       >
                         <Eye size={16} /> <span>View</span>
                       </button>
@@ -121,7 +128,7 @@ const IssuedPolicies: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-4 text-center text-gray-500">
+                  <td colSpan={5} className="py-4 text-center text-gray-500">
                     No policies found.
                   </td>
                 </tr>

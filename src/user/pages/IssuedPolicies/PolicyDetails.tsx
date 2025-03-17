@@ -5,11 +5,8 @@ type Policy = {
   _id: string;
   provider: string;
   policyNumber: string;
-  name: string;
-  vehicleType: string;
-  insuranceType: string;
   coverage: string;
-  premiumAmount: number | undefined; // Added undefined as a possible type
+  premiumAmount: number | string | undefined;
 };
 
 const PolicyDetails = () => {
@@ -23,7 +20,7 @@ const PolicyDetails = () => {
     const fetchPolicy = async () => {
       try {
         console.log(id);
-        const response = await fetch(`http://localhost:5000/api/policies/get/${id}`); // Replace with your backend API endpoint
+        const response = await fetch(`http://localhost:5000/api/policies/get/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch policy");
         }
@@ -98,11 +95,14 @@ const PolicyDetails = () => {
   }
 
   // Helper function to safely format premiumAmount
-  const formatPremiumAmount = (amount: number | undefined): string => {
-    if (typeof amount === "number") {
-      return amount.toFixed(2);
-    }
-    return "0.00"; // Default value for invalid or undefined amounts
+  const formatPremiumAmount = (amount: number | string | undefined): string => {
+    if (amount === undefined || amount === null) return "0.00";
+    
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    
+    if (isNaN(numAmount)) return "0.00";
+    
+    return numAmount.toFixed(2);
   };
 
   return (
@@ -121,14 +121,14 @@ const PolicyDetails = () => {
             </div>
 
             <div className="bg-purple-50 p-3 rounded">
-              <p className="text-sm text-purple-500 font-medium">Vehicle Type</p>
-              <p className="text-gray-800 font-medium">{policy.vehicleType}</p>
+              <p className="text-sm text-purple-500 font-medium">Policy Number</p>
+              <p className="text-gray-800 font-medium">{policy.policyNumber}</p>
             </div>
           </div>
 
           <div className="bg-purple-50 p-3 rounded">
-            <p className="text-sm text-purple-500 font-medium">Insurance Type</p>
-            <p className="text-gray-800">{policy.insuranceType}</p>
+            <p className="text-sm text-purple-500 font-medium">Coverage</p>
+            <p className="text-gray-800">{policy.coverage}</p>
           </div>
 
           <div className="bg-purple-100 p-4 rounded-md">

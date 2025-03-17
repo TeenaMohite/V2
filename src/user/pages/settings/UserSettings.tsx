@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 const UserSettings = () => {
   const [activeTab, setActiveTab] = useState("account");
   const [userInfo, setUserInfo] = useState({
+    _id: "", // Add the _id property
     firstName: "",
     lastName: "",
     phone: "",
@@ -23,42 +24,109 @@ const UserSettings = () => {
     },
   });
 
+  // Fetch user settings from API on component mount
   useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem("userSettings") || "{}");
-    if (Object.keys(savedData).length > 0) {
-      setUserInfo((prev) => ({
-        ...prev,
-        ...savedData,
-        notifications: savedData.notifications || prev.notifications,
-        security: savedData.security || prev.security,
-      }));
-    }
+    const fetchUserSettings = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/user/settings/USER_ID`);
+        if (!response.ok) throw new Error("Failed to fetch user settings");
+        const data = await response.json();
+        setUserInfo((prev) => ({
+          ...prev,
+          ...data,
+          notifications: data.notifications || prev.notifications,
+          security: data.security || prev.security,
+        }));
+      } catch (error) {
+        console.error("Error fetching user settings:", error);
+      }
+    };
+  
+    fetchUserSettings();
   }, []);
+  
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value, type, checked } = e.target;
-  //   setUserInfo((prev) => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
+  const handleToggle = (
+    section: "notifications" | "security",
+    key: "reports" | "sound" | "vibrations" | "google2FA" | "sms2FA"
+  ) => {
+    setUserInfo((prev) => {
+      const sectionData = prev[section];
+      if (section === "notifications" && key in sectionData && typeof sectionData === "object" && "reports" in sectionData) {
+        return {
+          ...prev,
+          [section]: {
+            ...sectionData,
+            [key]: !sectionData[key as keyof typeof userInfo.notifications],
+          },
+        };
+      } else if (section === "security" && key in sectionData && typeof sectionData === "object" && "google2FA" in sectionData) {
+        return {
+          ...prev,
+          [section]: {
+            ...sectionData,
+            [key]: !sectionData[key as keyof typeof userInfo.security],
+          },
+        };
+      }
+      return prev;
+    });
+  };
 
-  const handleToggle = (section: "notifications" | "security", key: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfo((prev) => ({
       ...prev,
-      [section]: {
-        ...prev[section as "notifications" | "security"],
-        [key]: section === "notifications" 
-          ? !prev.notifications[key as keyof typeof prev.notifications] 
-          : !prev.security[key as keyof typeof prev.security],
-      },
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSave = () => {
-    localStorage.setItem("userSettings", JSON.stringify(userInfo));
-    alert("Settings saved successfully!");
+  // Save settings to API
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/user/settings/USER_ID`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userInfo),
+      });
+  
+      if (!response.ok) throw new Error("Failed to update settings");
+  
+      alert("Settings saved successfully!");
+    } catch (error) {
+      console.error("Error updating settings:", error);
+    }
   };
+
+  //delete account
+  const handleDeleteAccount = async (userId: string) => {
+    if (!userId) {
+        console.error("User ID is missing. Cannot delete account.");
+        alert("User ID not found. Please log in again.");
+        return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete your account?")) return;
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/user/settings/${userId}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.json();
+            throw new Error(errorMessage.message || "Failed to delete account");
+        }
+
+        alert("Account deleted successfully!");
+        window.location.href = "/login"; // Redirect after deletion
+    } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("Error deleting account. Please try again.");
+    }
+};
+
 
   return (
     <div className="settings-container bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 text-white min-h-screen p-6">
@@ -83,75 +151,62 @@ const UserSettings = () => {
         </button>
       </div>
 
+      {/* Account Settings */}
       {activeTab === "account" && (
-        <div className="tab-content bg-purple-200 p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-purple-500 mt-6 mb-4">Notification Settings</h3>
+        <div className="tab-content bg-white p-6 rounded-lg shadow-md text-gray-900">
+          <h3 className="text-lg font-semibold text-purple-500 mb-4">Personal Info</h3>
+          <div className="space-y-3">
+            <input type="text" name="firstName" value={userInfo.firstName} onChange={handleChange} placeholder="First Name" className="input-field" />
+            <input type="text" name="lastName" value={userInfo.lastName} onChange={handleChange} placeholder="Last Name" className="input-field" />
+            <input type="text" name="phone" value={userInfo.phone} onChange={handleChange} placeholder="Phone Number" className="input-field" />
+            <input type="text" name="address" value={userInfo.address} onChange={handleChange} placeholder="Address" className="input-field" />
+          </div>
+
+          <h3 className="text-lg font-semibold text-purple-500 mt-6 mb-4">Payment Info</h3>
+          <div className="space-y-3">
+            <input type="text" name="creditCard" value={userInfo.creditCard} onChange={handleChange} placeholder="Credit Card Number" className="input-field" />
+            <input type="text" name="cardHolder" value={userInfo.cardHolder} onChange={handleChange} placeholder="Card Name Holder" className="input-field" />
+            <input type="text" name="country" value={userInfo.country} onChange={handleChange} placeholder="Country" className="input-field" />
+          </div>
+
+          <h3 className="text-lg font-semibold text-purple-500 mt-6 mb-4">Notifications</h3>
           <div className="toggle-group space-y-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={userInfo.notifications.reports}
-                onChange={() => handleToggle("notifications", "reports")}
-                className="w-4 h-4 text-purple-500 rounded focus:ring-yellow-500"
-              />
-              <span className="ml-2 text-gray-500">Receive Reports</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={userInfo.notifications.sound}
-                onChange={() => handleToggle("notifications", "sound")}
-                className="w-4 h-4 text-purple-500 rounded focus:ring-yellow-500"
-              />
-              <span className="ml-2 text-gray-500">Enable Sound Notifications</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={userInfo.notifications.vibrations}
-                onChange={() => handleToggle("notifications", "vibrations")}
-                className="w-4 h-4 text-purple-500 rounded focus:ring-yellow-500"
-              />
-              <span className="ml-2 text-gray-500">Enable Vibrations</span>
-            </label>
+            {Object.keys(userInfo.notifications).map((key) => (
+              <label key={key} className="flex items-center">
+                <input type="checkbox" checked={userInfo.notifications[key as keyof typeof userInfo.notifications]} onChange={() => handleToggle("notifications", key as "reports" | "sound" | "vibrations")} className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500" />
+                <span className="ml-2">{key.replace(/([A-Z])/g, " $1")}</span>
+              </label>
+            ))}
           </div>
         </div>
       )}
 
+      {/* Security Settings */}
       {activeTab === "security" && (
-        <div className="tab-content bg-purple-200 p-6 rounded-lg shadow-md">
+        <div className="tab-content bg-white p-6 rounded-lg shadow-md text-gray-900">
           <h3 className="text-lg font-semibold text-purple-500 mb-4">Security Settings</h3>
           <div className="toggle-group space-y-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={userInfo.security.google2FA}
-                onChange={() => handleToggle("security", "google2FA")}
-                className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500"
-              />
-              <span className="ml-2 text-gray-500">Enable Google 2FA</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={userInfo.security.sms2FA}
-                onChange={() => handleToggle("security", "sms2FA")}
-                className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500"
-              />
-              <span className="ml-2 text-gray-500">Enable SMS 2FA</span>
-            </label>
+            {Object.keys(userInfo.security).map((key) => (
+              <label key={key} className="flex items-center">
+                <input type="checkbox" checked={userInfo.security[key as keyof typeof userInfo.security]} onChange={() => handleToggle("security", key as "google2FA" | "sms2FA")} className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500" />
+                <span className="ml-2">{key.replace(/([A-Z])/g, " $1")}</span>
+              </label>
+            ))}
           </div>
 
-          <div className="actions mt-6 flex justify-end">
-            <button
-              className="save-btn bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow-md transition duration-300 ease-in-out"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-          </div>
+          <h3 className="text-lg font-semibold text-red-500 mt-6 mb-4">Delete Account</h3>
+          <p className="text-sm text-gray-600">Permanently remove your account and all associated data.</p>
+          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md mt-4" onClick={() => handleDeleteAccount(userInfo._id)}>Delete Account</button>
+
         </div>
       )}
+
+      {/* Save Button */}
+      <div className="actions mt-6 flex justify-end">
+        <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow-md transition duration-300 ease-in-out" onClick={handleSave}>
+          Save
+        </button>
+      </div>
     </div>
   );
 };
