@@ -39,7 +39,7 @@ const Login = () => {
       localStorage.setItem("role", data.role);
       if (data.role === "Admin") {
         localStorage.setItem("adminAuthenticated", "true");
-        navigate("/admin");
+        navigate("/admin/users");
       } else {
         localStorage.setItem("userAuthenticated", "true");
         navigate("/user/home");

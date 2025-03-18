@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 interface Policy {
-  id: string;
+  _id: string; // Changed from id to _id to match MongoDB
   provider: string;
   policyNumber: string;
   coverage: string;
@@ -15,20 +15,25 @@ const PolicyManagement: React.FC = () => {
   const [premiumAmount, setPremiumAmount] = useState<string>("");
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchPolicies = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch("http://localhost:5000/api/policies/getall");
         if (!response.ok) throw new Error("Failed to fetch policies");
         const data: Policy[] = await response.json();
         setPolicies(data);
+        setError(null);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
         } else {
           setError("An unknown error occurred");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPolicies();
@@ -45,15 +50,23 @@ const PolicyManagement: React.FC = () => {
       setError("Premium amount must be a valid positive number.");
       return;
     }
+    
     try {
+      setIsLoading(true);
       const response = await fetch("http://localhost:5000/api/policies/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider, policyNumber, coverage, premiumAmount: premium }),
       });
+      
       const data = await response.json();
+      
       if (!response.ok) throw new Error(data.message || "Failed to add policy");
+      
+      // Add the new policy to the list
       setPolicies([...policies, data.newPolicy]);
+      
+      // Reset the form
       setProvider("");
       setPolicyNumber("");
       setCoverage("");
@@ -65,23 +78,34 @@ const PolicyManagement: React.FC = () => {
       } else {
         setError("An unknown error occurred while adding the policy");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
+      setIsLoading(true);
       const response = await fetch(`http://localhost:5000/api/policies/delete/${id}`, {
         method: "DELETE",
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to delete policy");
-      setPolicies(policies.filter((policy) => policy.id !== id));
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete policy");
+      }
+      
+      // Only update the UI after successful deletion
+      setPolicies(policies.filter((policy) => policy._id !== id));
+      setError(null);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
         setError("An unknown error occurred while deleting the policy");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -135,51 +159,57 @@ const PolicyManagement: React.FC = () => {
         <button 
           type="submit" 
           className="w-full sm:w-auto px-4 py-2 bg-purple-900 hover:bg-purple-800 text-white font-medium rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          disabled={isLoading}
         >
-          Add Policy
+          {isLoading ? "Processing..." : "Add Policy"}
         </button>
       </form>
       
       <h2 className="text-lg sm:text-xl font-semibold text-purple-900 mt-8 mb-3">Uploaded Policies</h2>
       
       <div className="overflow-x-auto bg-purple-700 rounded-lg shadow-md">
-        <table className="w-full">
-          <thead className="bg-purple-800 text-white">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Provider</th>
-              <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Policy Number</th>
-              <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Coverage</th>
-              <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Premium</th>
-              <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-purple-600">
-            {policies.length === 0 ? (
+        {isLoading && policies.length === 0 ? (
+          <div className="px-4 py-4 text-center text-white">Loading policies...</div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-purple-800 text-white">
               <tr>
-                <td colSpan={5} className="px-4 py-4 text-center text-white">No policies found.</td>
+                <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Provider</th>
+                <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Policy Number</th>
+                <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Coverage</th>
+                <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Premium</th>
+                <th className="px-4 py-3 text-left text-xs sm:text-sm font-medium uppercase tracking-wider">Actions</th>
               </tr>
-            ) : (
-              policies.map((policy) => (
-                <tr key={policy.id} className="hover:bg-purple-600 transition-colors duration-150">
-                  <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.provider}</td>
-                  <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.policyNumber}</td>
-                  <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.coverage}</td>
-                  <td className="px-4 py-3 text-sm sm:text-base text-white">
-                    ${typeof policy.premiumAmount === 'number' ? policy.premiumAmount.toFixed(2) : policy.premiumAmount}
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    <button 
-                      onClick={() => handleDelete(policy.id)} 
-                      className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
-                      Delete
-                    </button>
-                  </td>
+            </thead>
+            <tbody className="divide-y divide-purple-600">
+              {policies.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-4 text-center text-white">No policies found.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                policies.map((policy) => (
+                  <tr key={policy._id} className="hover:bg-purple-600 transition-colors duration-150">
+                    <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.provider}</td>
+                    <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.policyNumber}</td>
+                    <td className="px-4 py-3 text-sm sm:text-base text-white">{policy.coverage}</td>
+                    <td className="px-4 py-3 text-sm sm:text-base text-white">
+                      ${typeof policy.premiumAmount === 'number' ? policy.premiumAmount.toFixed(2) : policy.premiumAmount}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <button 
+                        onClick={() => handleDelete(policy._id)} 
+                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "..." : "Delete"}
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
