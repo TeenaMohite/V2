@@ -22,7 +22,7 @@ const Quote: React.FC = () => {
 
   // Fetch quote requests from the backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/quotes2/getall")
+    fetch("https://v2-backend-1-8k12.onrender.com/api/quotes2/getall")
       .then((res) => res.json())
       .then((data) => setQuoteRequests(data))
       .catch((err) => console.error("Error fetching quote requests:", err));
@@ -36,7 +36,7 @@ const Quote: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/quotes2/create", {
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/quotes2/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

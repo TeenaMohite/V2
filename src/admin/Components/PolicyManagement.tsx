@@ -21,7 +21,7 @@ const PolicyManagement: React.FC = () => {
     const fetchPolicies = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/policies/getall");
+        const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/policies/getall");
         if (!response.ok) throw new Error("Failed to fetch policies");
         const data: Policy[] = await response.json();
         setPolicies(data);
@@ -53,7 +53,7 @@ const PolicyManagement: React.FC = () => {
     
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:5000/api/policies/create", {
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/policies/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider, policyNumber, coverage, premiumAmount: premium }),
@@ -86,7 +86,7 @@ const PolicyManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:5000/api/policies/delete/${id}`, {
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/policies/delete/${id}`, {
         method: "DELETE",
       });
       

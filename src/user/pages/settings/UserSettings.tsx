@@ -28,7 +28,7 @@ const UserSettings = () => {
   useEffect(() => {
     const fetchUserSettings = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/user/settings/USER_ID`);
+        const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/user/settings/USER_ID`);
         if (!response.ok) throw new Error("Failed to fetch user settings");
         const data = await response.json();
         setUserInfo((prev) => ({
@@ -83,7 +83,7 @@ const UserSettings = () => {
   // Save settings to API
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/user/settings/USER_ID`, {
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/user/settings/USER_ID`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const UserSettings = () => {
     if (!window.confirm("Are you sure you want to delete your account?")) return;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/user/settings/${userId}`, {
+        const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/user/settings/${userId}`, {
             method: "DELETE",
         });
 

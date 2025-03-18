@@ -59,7 +59,7 @@ const Home = () => {
   const fetchQuotes = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/quotes/getall");
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/quotes/getall");
       const data = await response.json();
       
       // Ensure quotes is always an array
@@ -81,7 +81,7 @@ const Home = () => {
 
   const markAsCompleted = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/quotes/${id}`, {
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/quotes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

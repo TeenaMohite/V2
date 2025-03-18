@@ -23,7 +23,7 @@ const TicketList = () => {
 
   const fetchTickets = () => {
     setIsLoading(true);
-    fetch("http://localhost:5000/api/tickets/getall")
+    fetch("https://v2-backend-1-8k12.onrender.com/api/tickets/getall")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch tickets");
@@ -47,7 +47,7 @@ const TicketList = () => {
 
   const deleteTicket = async (ticketId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/delete/${ticketId}`, {
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/tickets/delete/${ticketId}`, {
         method: "DELETE",
       });
       

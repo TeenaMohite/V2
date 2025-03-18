@@ -14,7 +14,7 @@ const Login = () => {
     try {
       console.log("Submitting form:", { email, password });
 
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

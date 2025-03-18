@@ -45,7 +45,7 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/user2/getall");
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/user2/getall");
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();
       setUsers(data);
@@ -60,7 +60,7 @@ const UserManagement: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/user2/admin/dashboard-stats");
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/user2/admin/dashboard-stats");
       if (!response.ok) throw new Error("Failed to fetch dashboard stats");
       const data = await response.json();
       setStats(data);
@@ -90,7 +90,7 @@ const UserManagement: React.FC = () => {
     }
     
     try {
-      const response = await fetch("http://localhost:5000/api/user2/create", {
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/user2/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser),
@@ -130,7 +130,7 @@ const UserManagement: React.FC = () => {
     
     try {
       // Make sure we're using _id, not id
-      const response = await fetch(`http://localhost:5000/api/user2/update/${editingUser._id}`, {
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/user2/update/${editingUser._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -160,7 +160,7 @@ const UserManagement: React.FC = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/user2/delete/${id}`, { 
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/user2/delete/${id}`, { 
         method: "DELETE",
         headers: { "Content-Type": "application/json" }
       });

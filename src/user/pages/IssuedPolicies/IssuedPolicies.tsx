@@ -22,7 +22,7 @@ const IssuedPolicies: React.FC = () => {
     const fetchPolicies = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/policies/getall");
+        const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/policies/getall");
         if (!response.ok) {
           throw new Error("Failed to fetch policies");
         }

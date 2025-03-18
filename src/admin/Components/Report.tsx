@@ -21,7 +21,7 @@ const Reports: React.FC = () => {
 
   const fetchReports = () => {
     setIsLoading(true);
-    fetch("http://localhost:5000/api/reports/getall")
+    fetch("https://v2-backend-1-8k12.onrender.com/api/reports/getall")
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Server responded with status: ${res.status}`);
@@ -59,7 +59,7 @@ const Reports: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/reports/create", {
+      const response = await fetch("https://v2-backend-1-8k12.onrender.com/api/reports/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ const Reports: React.FC = () => {
 
   const handleDeleteReport = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/reports/delete/${id}`, { 
+      const response = await fetch(`https://v2-backend-1-8k12.onrender.com/api/reports/delete/${id}`, { 
         method: "DELETE" 
       });
       
