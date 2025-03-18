@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Menu, User } from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
+import { Menu, User } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 interface UserNavbarProps {
   toggleSidebar: () => void;
@@ -8,6 +9,7 @@ interface UserNavbarProps {
 const UserNavbar = ({ toggleSidebar }: UserNavbarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); // ✅ Use navigate function
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -26,10 +28,16 @@ const UserNavbar = ({ toggleSidebar }: UserNavbarProps) => {
     };
   }, []);
 
+  // ✅ Handle navigation without page refresh
+  const handleNavigation = (path: string) => {
+    navigate(path); // Navigate to the selected route
+    setIsDropdownOpen(false); // Close dropdown
+  };
+
   return (
     <div className="user-navbar bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 text-white shadow-lg p-4 flex justify-between items-center">
       {/* Hamburger Menu */}
-      <button 
+      <button
         className="user-hamburger-menu bg-purple-500 hover:bg-purple-400 text-white p-2 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-110"
         onClick={toggleSidebar}
       >
@@ -41,42 +49,34 @@ const UserNavbar = ({ toggleSidebar }: UserNavbarProps) => {
 
       {/* User Icon and Dropdown */}
       <div className="user-icon-container relative" ref={dropdownRef}>
-        <User 
-          className="user-icon cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-white p-2 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-110" 
-          size={22} 
-          onClick={toggleDropdown} 
+        <User
+          className="user-icon cursor-pointer bg-purple-600 hover:bg-purple-500 text-white p-2 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-110"
+          size={25}
+          onClick={toggleDropdown}
         />
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-gray-900 border border-yellow-600 rounded-lg shadow-lg overflow-hidden z-10">
+          <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-gray-900 border border-purple-600 rounded-lg shadow-lg overflow-hidden z-10">
             <ul>
               <li>
-                <a 
-                  href="/UserProfile" 
-                  className="block px-4 py-2 text-white hover:bg-yellow-600 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  Profile
-                </a>
+                <button
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-purple-600 transition duration-300 ease-in-out"
+                  onClick={() => handleNavigation("/user/userProfile")}>Profile
+                  </button>
               </li>
               <li>
-                <a 
-                  href="/settings" 
-                  className="block px-4 py-2 text-white hover:bg-yellow-600 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  Settings
-                </a>
+                <button
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-purple-600 transition duration-300 ease-in-out"
+                   onClick={() => handleNavigation("/user/UserSettings")}>Settings</button>
               </li>
               <li>
-                <a 
-                  href="/logout" 
-                  className="block px-4 py-2 text-white hover:bg-yellow-600 hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => setIsDropdownOpen(false)}
+                <button
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-purple-600 transition duration-300 ease-in-out"
+                  onClick={() => handleNavigation("/")}
                 >
                   Logout
-                </a>
+                </button>
               </li>
             </ul>
           </div>

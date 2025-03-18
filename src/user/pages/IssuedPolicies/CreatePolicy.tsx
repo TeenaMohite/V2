@@ -1,24 +1,25 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Policy = {
-  id: string;
-  name: string;
-  insuranceType: string;
-  vehicleType: string;
+  provider: string;
+  policyNumber: string;
+  coverage: string;
+  premiumAmount: number;
 };
 
 const CreatePolicy = () => {
   const navigate = useNavigate();
   const [policy, setPolicy] = useState<Policy>({
-    id: "",
-    name: "",
-    insuranceType: "Full",
-    vehicleType: "2-Wheeler",
+    provider: "",
+    policyNumber: "",
+    coverage: "Full",
+    premiumAmount: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setPolicy({ ...policy, [e.target.name]: e.target.value });
+    const value = e.target.name === "premiumAmount" ? parseFloat(e.target.value) : e.target.value;
+    setPolicy({ ...policy, [e.target.name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,31 +55,47 @@ const CreatePolicy = () => {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="bg-purple-100 p-6 rounded-lg shadow-md">
-        {/* Name Field */}
+        {/* Provider Field */}
         <div className="form-group mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Name
+          <label htmlFor="provider" className="block text-sm font-medium text-gray-700 mb-1">
+            Provider
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={policy.name}
+            id="provider"
+            name="provider"
+            value={policy.provider}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 bg-white border border-purple-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
           />
         </div>
 
-        {/* Insurance Type Dropdown */}
+        {/* Policy Number Field */}
         <div className="form-group mb-4">
-          <label htmlFor="insuranceType" className="block text-sm font-medium text-gray-700 mb-1">
-            Insurance Type
+          <label htmlFor="policyNumber" className="block text-sm font-medium text-gray-700 mb-1">
+            Policy Number
+          </label>
+          <input
+            type="text"
+            id="policyNumber"
+            name="policyNumber"
+            value={policy.policyNumber}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 bg-white border border-purple-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+          />
+        </div>
+
+        {/* Coverage Dropdown */}
+        <div className="form-group mb-4">
+          <label htmlFor="coverage" className="block text-sm font-medium text-gray-700 mb-1">
+            Coverage
           </label>
           <select
-            id="insuranceType"
-            name="insuranceType"
-            value={policy.insuranceType}
+            id="coverage"
+            name="coverage"
+            value={policy.coverage}
             onChange={handleChange}
             className="w-full px-3 py-2 bg-white border border-purple-300 rounded-md text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
           >
@@ -87,21 +104,22 @@ const CreatePolicy = () => {
           </select>
         </div>
 
-        {/* Vehicle Type Dropdown */}
+        {/* Premium Amount Field */}
         <div className="form-group mb-4">
-          <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 mb-1">
-            Vehicle Type
+          <label htmlFor="premiumAmount" className="block text-sm font-medium text-gray-700 mb-1">
+            Premium Amount
           </label>
-          <select
-            id="vehicleType"
-            name="vehicleType"
-            value={policy.vehicleType}
+          <input
+            type="number"
+            id="premiumAmount"
+            name="premiumAmount"
+            value={policy.premiumAmount}
             onChange={handleChange}
-            className="w-full px-3 py-2 bg-white border border-purple-300 rounded-md text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-          >
-            <option value="2-Wheeler">2-Wheeler</option>
-            <option value="4-Wheeler">4-Wheeler</option>
-          </select>
+            required
+            step="0.01"
+            min="0"
+            className="w-full px-3 py-2 bg-white border border-purple-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+          />
         </div>
 
         {/* Submit Button */}

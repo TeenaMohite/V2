@@ -17,7 +17,6 @@ interface DashboardStats {
   };
   quotes: number;
   policies: number;
-  reports:number,
   tickets: {
     total: number;
     open: number;
@@ -213,14 +212,7 @@ const UserManagement: React.FC = () => {
           <h2 className="text-lg font-semibold text-green-700">Policies</h2>
           <p className="text-3xl font-bold">{stats?.policies || 0}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <h2 className="text-lg font-semibold text-purple-700">Reports</h2>
-          <p className="text-3xl font-bold">{stats?.reports || 14}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <h2 className="text-lg font-semibold text-purple-700">Transactions</h2>
-          <p className="text-3xl font-bold">₹{stats?.reports || 540}</p>
-        </div>
+        
         <div className="bg-white rounded-lg shadow-md p-4 text-center">
           <h2 className="text-lg font-semibold text-orange-700">Tickets</h2>
           <p className="text-3xl font-bold">{stats?.tickets.total || 0}</p>

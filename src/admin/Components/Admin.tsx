@@ -84,7 +84,7 @@ const AdminLayout = () => {
     <div className="dashboard-container flex h-screen bg-gradient-to-r from-white via-white to-white text-black">
       <div className={`sidebar bg-purple-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} w-64 fixed lg:relative inset-y-0 left-0 z-50`}>
         <h2 className="sidebar-header text-center py-4 bg-purple-800 text-purple-300 font-bold">
-          <Link to="/admin" onClick={closeSidebar}>Admin Dashboard</Link>
+          <Link to="/admin/users" onClick={closeSidebar}>Admin Dashboard</Link>
         </h2>
         <nav className="sidebar-nav">
           <ul className="py-4 space-y-2">
